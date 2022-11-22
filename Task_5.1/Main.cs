@@ -28,21 +28,20 @@ namespace Task_6._1
             Documet doc = commandData.Application.ActiveUIDocument.Document;
             using (var ts = new Transaction(doc, "export ifs"))
             {
-                ts.Start();
-
-                ViewPlan viewPlan = new FilteredElementCollector(doc)
-                    .OfClass(typeof(ViewPlan))
-                    .Cast<viewPlan>()
-                    FirstOrDefault(viewPlan => v.ViewType.FloorPlan &&
-                    v.Name.Equals("Level 1"));
-                var ifsOption = new IFSExportOptions();
-                doc.Export(Enviroment.GetFolderPath(Environment.SpecialFolder.Desktop), "export.ifs",
-                    new List<ElementId> { viewPlan.Id}, ifsOption;
-                ts.Commit();
-            }
+                tr.Start("Export doc");
+                try
+                {
+                    IFCExportOptions o = new IFCExportOptions();
+                    bool ret = doc.Export("D:\\temp\\", "ExportDoc.ifc", o);
+                    tr.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tr.RollBack();
+                }
             return Result.Succeeded;
         }
-        public void BatchPrint(DocumentPage doc)
+      /*  public void BatchPrint(DocumentPage doc)
         {
             var sheets = new FilteredElementCollector(doc)
                 .WhereElementIsNotElementType()
@@ -102,7 +101,7 @@ namespace Task_6._1
                      return Result.Failed;
                 }
                 printManager.CombinedFile = false;
-                printManager.SubmitPrint();
+                printManager.SubmitPrint();*/
             }
         }
     }
